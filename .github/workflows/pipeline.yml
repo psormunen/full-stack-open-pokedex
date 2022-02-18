@@ -59,3 +59,7 @@ jobs:
         env:
           COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
         run: echo "$COMMIT_MESSAGES"
+      - name: boolean hit
+        env:
+          COMMIT_HIT: ${{ contains(join(toJson(github.event.commits.*.message)),'#skip') }}
+        run: echo "$COMMIT_HIT"
