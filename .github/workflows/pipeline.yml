@@ -49,13 +49,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           DEFAULT_BUMP: patch
-      #test
-      - name: Check deployed URL
-        uses: jtalk/url-health-check-action@v2
-        with:
-          url: https://pokedex-fso-app.herokuapp2.com
-          max-attempts: 2
-          retry-delay: 5s
       # Slack logs
       - name: build failure
         if: failure() && steps.runBuild.outcome == 'failure'
