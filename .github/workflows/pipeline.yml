@@ -63,12 +63,12 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: custom
-          fields: workflow,job,commit,repo,ref,took
+          fields: commit,repo,took
           custom_payload: |
             {
               attachments: [{
                 color: 'good',
-                text: `${process.env.AS_WORKFLOW}\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} in ${process.env.AS_TOOK}`,
+                text: `New version deployed to https://pokedex-fso-app.herokuapp.com (${process.env.AS_COMMIT}) of ${process.env.AS_REPO} build took ${process.env.AS_TOOK}`,
               }]
             }
         env:
