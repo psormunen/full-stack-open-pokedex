@@ -21,6 +21,7 @@ jobs:
       - name: lint
         run: npm run eslint
       - name: build
+        id: runBuild
         run: npm run build
       - name: test
         run: npm run test
@@ -31,6 +32,7 @@ jobs:
           start: npm run start-prod
           wait-on: http://localhost:5000
       - name: deployment
+        id: herokuDeployment
         if: ${{ (github.event_name == 'push') && !(contains(join(toJson(github.event.commits.*.message)),'#skip')) }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
@@ -47,3 +49,27 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           DEFAULT_BUMP: patch
+      # Slack logs
+      - name: build failure
+        if: failure() && steps.runBuild.outcome == 'failure'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: 'failure'
+          fields: repo,message,commit,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: deployment success
+        if: always() && steps.herokuDeployment.outcome == 'success'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: workflow,job,commit,repo,ref,took
+          custom_payload: |
+            {
+              attachments: [{
+                color: 'good',
+                text: `${process.env.AS_WORKFLOW}\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} in ${process.env.AS_TOOK}`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
