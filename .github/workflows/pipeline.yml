@@ -49,7 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           DEFAULT_BUMP: patch
-      # Slack logs
+      # Slack logs #
       - name: build failure
         if: failure() && steps.runBuild.outcome == 'failure'
         uses: 8398a7/action-slack@v3
